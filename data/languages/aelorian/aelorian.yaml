@@ -1,0 +1,10 @@
+word_order: "SVO"
+adj_before_noun: true
+
+affixes:
+  NOUN_PLUR: "i"
+  VERB_PAST: "an"
+  VERB_FUTURE: "ar"
+  VERB_PROG: "in"
+  ADJ_COMP: "el"
+  ADJ_SUPER: "is"

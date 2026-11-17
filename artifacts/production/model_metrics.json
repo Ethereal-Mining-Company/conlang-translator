@@ -1,0 +1,45 @@
+{
+  "Random Forest": {
+    "tuning_runs": [
+      {
+        "Model": "RF_Baseline",
+        "Validation Accuracy": 0.6165,
+        "Train Seconds": 1.21
+      },
+      {
+        "Model": "RF_Tuned",
+        "Validation Accuracy": 0.7923,
+        "Train Seconds": 4.41
+      },
+      {
+        "Model": "RF_Deep",
+        "Validation Accuracy": 0.9305,
+        "Train Seconds": 71.49
+      }
+    ],
+    "best_test_metrics": {
+      "test_accuracy": 0.9293,
+      "macro_f1": 0.8705,
+      "latency_ms": 0.156
+    }
+  },
+  "BiLSTM-CRF": {
+    "tuning_runs": [
+      {
+        "Model": "BiLSTM_Baseline",
+        "Validation Accuracy": 0.8713,
+        "Train Seconds": 39.39
+      },
+      {
+        "Model": "BiLSTM_Tuned",
+        "Validation Accuracy": 0.9068,
+        "Train Seconds": 116.33
+      }
+    ],
+    "best_test_metrics": {
+      "test_accuracy": 0.9083,
+      "macro_f1": 0.8613,
+      "latency_ms": 0.366
+    }
+  }
+}

@@ -1,0 +1,2 @@
+# Custom campaign proper nouns & overrides
+ur : propn = Ur

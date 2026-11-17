@@ -1,0 +1,20 @@
+contractions:
+  "\\bcan't\\b": "cannot"
+  "\\bwon't\\b": "will not"
+  "n't\\b": " not"
+  "'re\\b": " are"
+  "'ve\\b": " have"
+  "'ll\\b": " will"
+  "'m\\b": " am"
+
+singular_triggers:
+  - "he"
+  - "she"
+  - "it"
+  - "who"
+  - "this"
+  - "that"
+  - "everyone"
+  - "someone"
+  - "nobody"
+  

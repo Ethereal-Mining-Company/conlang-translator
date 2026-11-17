@@ -1,0 +1,62 @@
+runtime:
+  random_seed: 42
+  deterministic: true
+  confusion_matrix_top_k: 12
+  metrics_file: "model_metrics.json"
+
+paths:
+  raw_data: "data/raw"
+  languages_dir: "data/languages"
+  lemmas_file: "data/lemmas.yaml"
+  english_rules: "data/english_rules.yaml"
+  artifacts_prod: "artifacts/production"
+  figures: "figures"
+  logs: "logs"
+
+dataset:
+  urls:
+    train: "https://raw.githubusercontent.com/UniversalDependencies/UD_English-EWT/refs/heads/master/en_ewt-ud-train.conllu"
+    dev: "https://raw.githubusercontent.com/UniversalDependencies/UD_English-EWT/refs/heads/master/en_ewt-ud-dev.conllu"
+    test: "https://raw.githubusercontent.com/UniversalDependencies/UD_English-EWT/refs/heads/master/en_ewt-ud-test.conllu"
+
+translator:
+  default_source: "english"
+  default_target: "aelorian"
+  active_model: "bilstm_crf"
+
+models:
+  random_forest:
+    enabled: true
+    display_name: "Random Forest"
+    artifact_name: "rf_tagger.joblib"
+    log_file: "rf_training.log"
+    runs:
+      - name: "RF_Baseline"
+        n_estimators: 50
+        max_depth: 20
+      - name: "RF_Tuned"
+        n_estimators: 150
+        max_depth: 40
+      - name: "RF_Deep"
+        n_estimators: 200
+        max_depth: null
+
+  bilstm_crf:
+    enabled: true
+    display_name: "BiLSTM-CRF"
+    artifact_name: "bilstm_crf.pt"
+    log_file: "bilstm_training.log"
+    batch_size: 32
+    eval_batch_size: 64
+    dropout: 0.3
+    runs:
+      - name: "BiLSTM_Baseline"
+        emb_dim: 64
+        hidden_dim: 128
+        epochs: 3
+        lr: 0.003
+      - name: "BiLSTM_Tuned"
+        emb_dim: 128
+        hidden_dim: 256
+        epochs: 6
+        lr: 0.003
