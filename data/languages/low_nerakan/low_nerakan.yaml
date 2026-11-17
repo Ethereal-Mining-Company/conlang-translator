@@ -1,0 +1,10 @@
+word_order: "SVO"
+adj_before_noun: true
+
+affixes:
+  NOUN_PLUR: "ot"
+  VERB_PAST: "uk"
+  VERB_FUTURE: "ag"
+  VERB_PROG: "ung"
+  ADJ_COMP: "ek"
+  ADJ_SUPER: "ug"

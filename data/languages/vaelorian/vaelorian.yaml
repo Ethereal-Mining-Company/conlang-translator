@@ -1,0 +1,23 @@
+name: Vaelorian
+code: vaelorian
+word_order: SVO
+adjective_position: before
+determiner_position: before
+adposition_type: preposition
+
+affixes:
+  PLUR:
+    type: suffix
+    form: "as"
+  PAST:
+    type: suffix
+    form: "en"
+  FUT:
+    type: suffix
+    form: "ir"
+  COMP:
+    type: suffix
+    form: "iel"
+  SUPER:
+    type: suffix
+    form: "ish"

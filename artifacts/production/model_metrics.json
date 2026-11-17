@@ -1,45 +1,1125 @@
 {
   "Random Forest": {
-    "tuning_runs": [
+    "display_name": "Random Forest",
+    "best_run_uuid": "run_b252c355",
+    "best_run_name": "RF_Tuned",
+    "best_val_accuracy": 0.9263162080483538,
+    "promoted": true,
+    "sweep": [
       {
-        "Model": "RF_Baseline",
-        "Validation Accuracy": 0.6165,
-        "Train Seconds": 1.21
+        "run_uuid": "run_734836a2",
+        "name": "RF_Baseline",
+        "tuned_params": {
+          "n_estimators": 100,
+          "max_depth": 30,
+          "max_features": "sqrt"
+        },
+        "val_accuracy": 0.701725783362494,
+        "fold_scores": [
+          0.701725783362494
+        ],
+        "time_s": 3.11,
+        "all_params": {
+          "bootstrap": "True",
+          "ccp_alpha": "0.0",
+          "class_weight": "None",
+          "criterion": "gini",
+          "max_depth": "30",
+          "max_features": "sqrt",
+          "max_leaf_nodes": "None",
+          "max_samples": "None",
+          "min_impurity_decrease": "0.0",
+          "min_samples_leaf": "1",
+          "min_samples_split": "2",
+          "min_weight_fraction_leaf": "0.0",
+          "monotonic_cst": "None",
+          "n_estimators": "100",
+          "n_jobs": "-1",
+          "oob_score": "False",
+          "random_state": "42",
+          "verbose": "0",
+          "warm_start": "False"
+        }
       },
       {
-        "Model": "RF_Tuned",
-        "Validation Accuracy": 0.7923,
-        "Train Seconds": 4.41
+        "run_uuid": "run_b252c355",
+        "name": "RF_Tuned",
+        "tuned_params": {
+          "n_estimators": 250,
+          "max_depth": null,
+          "max_features": "sqrt",
+          "class_weight": "balanced_subsample"
+        },
+        "val_accuracy": 0.9263162080483538,
+        "fold_scores": [
+          0.9263162080483538
+        ],
+        "time_s": 180.46,
+        "all_params": {
+          "bootstrap": "True",
+          "ccp_alpha": "0.0",
+          "class_weight": "balanced_subsample",
+          "criterion": "gini",
+          "max_depth": "None",
+          "max_features": "sqrt",
+          "max_leaf_nodes": "None",
+          "max_samples": "None",
+          "min_impurity_decrease": "0.0",
+          "min_samples_leaf": "1",
+          "min_samples_split": "2",
+          "min_weight_fraction_leaf": "0.0",
+          "monotonic_cst": "None",
+          "n_estimators": "250",
+          "n_jobs": "-1",
+          "oob_score": "False",
+          "random_state": "42",
+          "verbose": "0",
+          "warm_start": "False"
+        }
       },
       {
-        "Model": "RF_Deep",
-        "Validation Accuracy": 0.9305,
-        "Train Seconds": 71.49
+        "run_uuid": "run_f0a1f9d4",
+        "name": "RF_DenseSplit",
+        "tuned_params": {
+          "n_estimators": 300,
+          "max_depth": null,
+          "max_features": 0.03
+        },
+        "val_accuracy": 0.9241689199936377,
+        "fold_scores": [
+          0.9241689199936377
+        ],
+        "time_s": 117.21,
+        "all_params": {
+          "bootstrap": "True",
+          "ccp_alpha": "0.0",
+          "class_weight": "None",
+          "criterion": "gini",
+          "max_depth": "None",
+          "max_features": "0.03",
+          "max_leaf_nodes": "None",
+          "max_samples": "None",
+          "min_impurity_decrease": "0.0",
+          "min_samples_leaf": "1",
+          "min_samples_split": "2",
+          "min_weight_fraction_leaf": "0.0",
+          "monotonic_cst": "None",
+          "n_estimators": "300",
+          "n_jobs": "-1",
+          "oob_score": "False",
+          "random_state": "42",
+          "verbose": "0",
+          "warm_start": "False"
+        }
       }
     ],
     "best_test_metrics": {
-      "test_accuracy": 0.9293,
-      "macro_f1": 0.8705,
-      "latency_ms": 0.156
-    }
+      "test_accuracy": 0.925998246592811,
+      "macro_f1": 0.8610883023929987,
+      "latency_ms": 0.5989938613392106
+    },
+    "confusion_matrix": {
+      "labels": [
+        "NOUN",
+        "PUNCT",
+        "PROPN",
+        "ADP",
+        "DET",
+        "PRON",
+        "ADJ",
+        "AUX",
+        "VERB",
+        "ADV",
+        "NOUN|Number=Plur",
+        "VERB|Tense=Past"
+      ],
+      "matrix": [
+        [
+          2962,
+          0,
+          156,
+          5,
+          1,
+          0,
+          23,
+          3,
+          28,
+          4,
+          21,
+          3
+        ],
+        [
+          1,
+          3075,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          258,
+          1,
+          1699,
+          6,
+          0,
+          0,
+          18,
+          1,
+          12,
+          2,
+          60,
+          3
+        ],
+        [
+          4,
+          0,
+          1,
+          1959,
+          0,
+          0,
+          0,
+          0,
+          2,
+          11,
+          3,
+          0
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          1870,
+          21,
+          0,
+          0,
+          0,
+          2,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          2,
+          0,
+          19,
+          1787,
+          0,
+          0,
+          0,
+          2,
+          0,
+          0
+        ],
+        [
+          170,
+          0,
+          60,
+          8,
+          1,
+          0,
+          1325,
+          0,
+          8,
+          21,
+          1,
+          44
+        ],
+        [
+          3,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1526,
+          9,
+          0,
+          0,
+          4
+        ],
+        [
+          66,
+          0,
+          10,
+          2,
+          0,
+          0,
+          3,
+          14,
+          1225,
+          3,
+          0,
+          3
+        ],
+        [
+          22,
+          0,
+          3,
+          46,
+          13,
+          2,
+          14,
+          0,
+          4,
+          1057,
+          5,
+          0
+        ],
+        [
+          28,
+          0,
+          24,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          831,
+          0
+        ],
+        [
+          17,
+          0,
+          3,
+          0,
+          0,
+          0,
+          1,
+          7,
+          9,
+          0,
+          0,
+          717
+        ]
+      ]
+    },
+    "data_source": "ud_english_ewt"
   },
   "BiLSTM-CRF": {
-    "tuning_runs": [
+    "display_name": "BiLSTM-CRF",
+    "best_run_uuid": "run_3e36dd24",
+    "best_run_name": "BiLSTM_MultiCharCNN",
+    "best_val_accuracy": 0.944687450294258,
+    "promoted": true,
+    "sweep": [
       {
-        "Model": "BiLSTM_Baseline",
-        "Validation Accuracy": 0.8713,
-        "Train Seconds": 39.39
+        "run_uuid": "run_b3cb139a",
+        "name": "BiLSTM_WordOnly",
+        "tuned_params": {
+          "emb_dim": 128,
+          "hidden_dim": 256,
+          "char_dim": 0,
+          "epochs": 5,
+          "lr": 0.003
+        },
+        "val_accuracy": 0.9032527437569589,
+        "val_loss": 3.80693,
+        "fold_scores": [
+          0.9032527437569589
+        ],
+        "time_s": 103.29,
+        "all_params": {
+          "emb_dim": 128,
+          "hidden_dim": 256,
+          "char_dim": 0,
+          "epochs": 5,
+          "lr": 0.003,
+          "dropout": 0.35,
+          "batch_size": 32
+        }
       },
       {
-        "Model": "BiLSTM_Tuned",
-        "Validation Accuracy": 0.9068,
-        "Train Seconds": 116.33
+        "run_uuid": "run_3e36dd24",
+        "name": "BiLSTM_MultiCharCNN",
+        "tuned_params": {
+          "emb_dim": 200,
+          "hidden_dim": 384,
+          "char_dim": 48,
+          "epochs": 10,
+          "lr": 0.0025
+        },
+        "val_accuracy": 0.944687450294258,
+        "val_loss": 1.157254,
+        "fold_scores": [
+          0.944687450294258
+        ],
+        "time_s": 560.97,
+        "all_params": {
+          "emb_dim": 200,
+          "hidden_dim": 384,
+          "char_dim": 48,
+          "epochs": 10,
+          "lr": 0.0025,
+          "dropout": 0.35,
+          "batch_size": 32
+        }
       }
     ],
     "best_test_metrics": {
-      "test_accuracy": 0.9083,
-      "macro_f1": 0.8613,
-      "latency_ms": 0.366
-    }
+      "test_accuracy": 0.9490714911931138,
+      "macro_f1": 0.9080964171976322,
+      "latency_ms": 1.3017439614880746
+    },
+    "confusion_matrix": {
+      "labels": [
+        "NOUN",
+        "PUNCT",
+        "PROPN",
+        "ADP",
+        "DET",
+        "PRON",
+        "ADJ",
+        "AUX",
+        "VERB",
+        "ADV",
+        "NOUN|Number=Plur",
+        "VERB|Tense=Past"
+      ],
+      "matrix": [
+        [
+          3037,
+          0,
+          99,
+          4,
+          1,
+          1,
+          42,
+          2,
+          20,
+          2,
+          7,
+          3
+        ],
+        [
+          0,
+          3069,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          244,
+          1,
+          1761,
+          8,
+          0,
+          0,
+          20,
+          1,
+          6,
+          0,
+          22,
+          1
+        ],
+        [
+          5,
+          1,
+          0,
+          1979,
+          0,
+          0,
+          1,
+          0,
+          1,
+          19,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          1882,
+          11,
+          0,
+          0,
+          0,
+          2,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          9,
+          1809,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0
+        ],
+        [
+          96,
+          0,
+          20,
+          4,
+          1,
+          0,
+          1489,
+          0,
+          5,
+          13,
+          2,
+          12
+        ],
+        [
+          1,
+          0,
+          0,
+          1,
+          0,
+          0,
+          1,
+          1531,
+          5,
+          0,
+          0,
+          2
+        ],
+        [
+          24,
+          0,
+          5,
+          0,
+          0,
+          0,
+          0,
+          7,
+          1286,
+          1,
+          0,
+          3
+        ],
+        [
+          8,
+          0,
+          2,
+          34,
+          4,
+          2,
+          16,
+          0,
+          2,
+          1101,
+          1,
+          0
+        ],
+        [
+          34,
+          0,
+          42,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          803,
+          0
+        ],
+        [
+          9,
+          0,
+          1,
+          0,
+          0,
+          0,
+          19,
+          4,
+          9,
+          0,
+          0,
+          712
+        ]
+      ]
+    },
+    "data_source": "ud_english_ewt"
+  },
+  "HistGradientBoosting": {
+    "display_name": "HistGradientBoosting",
+    "best_run_uuid": "run_5bdf7923",
+    "best_run_name": "HGB_MaxSafe4096",
+    "best_val_accuracy": 0.9374502942579926,
+    "promoted": true,
+    "sweep": [
+      {
+        "run_uuid": "run_7da8f812",
+        "name": "HGB_Hashed2048",
+        "tuned_params": {
+          "n_hash_features": 2048,
+          "max_iter": 200,
+          "learning_rate": 0.08,
+          "max_leaf_nodes": 63
+        },
+        "val_accuracy": 0.9345872435183712,
+        "fold_scores": [
+          0.9345872435183712
+        ],
+        "time_s": 1794.32,
+        "all_params": {
+          "categorical_features": "from_dtype",
+          "class_weight": "None",
+          "early_stopping": "False",
+          "interaction_cst": "None",
+          "l2_regularization": "0.1",
+          "learning_rate": "0.08",
+          "loss": "log_loss",
+          "max_bins": "128",
+          "max_depth": "None",
+          "max_features": "1.0",
+          "max_iter": "200",
+          "max_leaf_nodes": "63",
+          "min_samples_leaf": "20",
+          "monotonic_cst": "None",
+          "n_iter_no_change": "10",
+          "random_state": "42",
+          "scoring": "loss",
+          "tol": "1e-07",
+          "validation_fraction": "0.1",
+          "verbose": "0",
+          "warm_start": "True"
+        }
+      },
+      {
+        "run_uuid": "run_5bdf7923",
+        "name": "HGB_MaxSafe4096",
+        "tuned_params": {
+          "n_hash_features": 4096,
+          "max_iter": 300,
+          "learning_rate": 0.07,
+          "max_leaf_nodes": 63
+        },
+        "val_accuracy": 0.9374502942579926,
+        "fold_scores": [
+          0.9374502942579926
+        ],
+        "time_s": 4802.81,
+        "all_params": {
+          "categorical_features": "from_dtype",
+          "class_weight": "None",
+          "early_stopping": "False",
+          "interaction_cst": "None",
+          "l2_regularization": "0.1",
+          "learning_rate": "0.07",
+          "loss": "log_loss",
+          "max_bins": "128",
+          "max_depth": "None",
+          "max_features": "1.0",
+          "max_iter": "300",
+          "max_leaf_nodes": "63",
+          "min_samples_leaf": "20",
+          "monotonic_cst": "None",
+          "n_iter_no_change": "10",
+          "random_state": "42",
+          "scoring": "loss",
+          "tol": "1e-07",
+          "validation_fraction": "0.1",
+          "verbose": "0",
+          "warm_start": "True"
+        }
+      }
+    ],
+    "best_test_metrics": {
+      "test_accuracy": 0.9394277516537818,
+      "macro_f1": 0.893827961453816,
+      "latency_ms": 26.30358604140549
+    },
+    "confusion_matrix": {
+      "labels": [
+        "NOUN",
+        "PUNCT",
+        "PROPN",
+        "ADP",
+        "DET",
+        "PRON",
+        "ADJ",
+        "AUX",
+        "VERB",
+        "ADV",
+        "NOUN|Number=Plur",
+        "VERB|Tense=Past"
+      ],
+      "matrix": [
+        [
+          2906,
+          1,
+          208,
+          4,
+          1,
+          1,
+          51,
+          3,
+          20,
+          9,
+          7,
+          3
+        ],
+        [
+          0,
+          3079,
+          1,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          207,
+          2,
+          1754,
+          7,
+          1,
+          0,
+          39,
+          2,
+          6,
+          7,
+          33,
+          2
+        ],
+        [
+          3,
+          1,
+          2,
+          1965,
+          0,
+          0,
+          0,
+          0,
+          2,
+          15,
+          1,
+          1
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          1879,
+          13,
+          0,
+          0,
+          0,
+          2,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          1,
+          0,
+          14,
+          1796,
+          0,
+          0,
+          0,
+          3,
+          0,
+          0
+        ],
+        [
+          87,
+          0,
+          37,
+          6,
+          1,
+          0,
+          1460,
+          0,
+          4,
+          20,
+          1,
+          24
+        ],
+        [
+          3,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1523,
+          9,
+          0,
+          0,
+          2
+        ],
+        [
+          30,
+          0,
+          5,
+          2,
+          0,
+          0,
+          0,
+          7,
+          1275,
+          2,
+          1,
+          4
+        ],
+        [
+          15,
+          0,
+          0,
+          36,
+          8,
+          4,
+          20,
+          1,
+          2,
+          1082,
+          2,
+          0
+        ],
+        [
+          26,
+          4,
+          27,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          1,
+          818,
+          0
+        ],
+        [
+          8,
+          0,
+          0,
+          0,
+          0,
+          0,
+          10,
+          3,
+          10,
+          0,
+          0,
+          724
+        ]
+      ]
+    },
+    "data_source": "ud_english_ewt"
+  },
+  "MLP Neural Net": {
+    "display_name": "MLP Neural Net",
+    "best_run_uuid": "run_cdb1a9e8",
+    "best_run_name": "MLP_Compact",
+    "best_val_accuracy": 0.9380467631620805,
+    "promoted": true,
+    "sweep": [
+      {
+        "run_uuid": "run_cdb1a9e8",
+        "name": "MLP_Compact",
+        "tuned_params": {
+          "hidden_layer_sizes": [
+            128
+          ],
+          "alpha": 0.0005,
+          "max_iter": 12,
+          "learning_rate_init": 0.002
+        },
+        "val_accuracy": 0.9380467631620805,
+        "fold_scores": [
+          0.9380467631620805
+        ],
+        "time_s": 411.87,
+        "all_params": {
+          "activation": "relu",
+          "alpha": "0.0005",
+          "batch_size": "512",
+          "beta_1": "0.9",
+          "beta_2": "0.999",
+          "early_stopping": "True",
+          "epsilon": "1e-08",
+          "hidden_layer_sizes": "(128,)",
+          "learning_rate": "constant",
+          "learning_rate_init": "0.002",
+          "max_fun": "15000",
+          "max_iter": "12",
+          "momentum": "0.9",
+          "n_iter_no_change": "2",
+          "nesterovs_momentum": "True",
+          "power_t": "0.5",
+          "random_state": "42",
+          "shuffle": "True",
+          "solver": "adam",
+          "tol": "0.0001",
+          "validation_fraction": "0.1",
+          "verbose": "True",
+          "warm_start": "False"
+        }
+      },
+      {
+        "run_uuid": "run_ef15bd5d",
+        "name": "MLP_Tuned",
+        "tuned_params": {
+          "hidden_layer_sizes": [
+            256,
+            128
+          ],
+          "alpha": 0.0001,
+          "max_iter": 15,
+          "learning_rate_init": 0.0015
+        },
+        "val_accuracy": 0.9361778272626053,
+        "fold_scores": [
+          0.9361778272626053
+        ],
+        "time_s": 1125.27,
+        "all_params": {
+          "activation": "relu",
+          "alpha": "0.0001",
+          "batch_size": "512",
+          "beta_1": "0.9",
+          "beta_2": "0.999",
+          "early_stopping": "True",
+          "epsilon": "1e-08",
+          "hidden_layer_sizes": "(256, 128)",
+          "learning_rate": "constant",
+          "learning_rate_init": "0.0015",
+          "max_fun": "15000",
+          "max_iter": "15",
+          "momentum": "0.9",
+          "n_iter_no_change": "2",
+          "nesterovs_momentum": "True",
+          "power_t": "0.5",
+          "random_state": "42",
+          "shuffle": "True",
+          "solver": "adam",
+          "tol": "0.0001",
+          "validation_fraction": "0.1",
+          "verbose": "True",
+          "warm_start": "False"
+        }
+      }
+    ],
+    "best_test_metrics": {
+      "test_accuracy": 0.9403841555750379,
+      "macro_f1": 0.8903219297248453,
+      "latency_ms": 0.09138687577889583
+    },
+    "confusion_matrix": {
+      "labels": [
+        "NOUN",
+        "PUNCT",
+        "PROPN",
+        "ADP",
+        "DET",
+        "PRON",
+        "ADJ",
+        "AUX",
+        "VERB",
+        "ADV",
+        "NOUN|Number=Plur",
+        "VERB|Tense=Past"
+      ],
+      "matrix": [
+        [
+          2928,
+          0,
+          160,
+          8,
+          0,
+          2,
+          45,
+          1,
+          35,
+          10,
+          8,
+          5
+        ],
+        [
+          0,
+          3072,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          171,
+          0,
+          1804,
+          4,
+          0,
+          2,
+          31,
+          0,
+          9,
+          4,
+          30,
+          3
+        ],
+        [
+          5,
+          0,
+          1,
+          1945,
+          0,
+          0,
+          2,
+          0,
+          5,
+          29,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          1867,
+          19,
+          0,
+          0,
+          0,
+          6,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          1,
+          0,
+          12,
+          1797,
+          0,
+          0,
+          1,
+          4,
+          0,
+          0
+        ],
+        [
+          67,
+          0,
+          31,
+          8,
+          1,
+          0,
+          1469,
+          0,
+          5,
+          34,
+          1,
+          25
+        ],
+        [
+          2,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1524,
+          11,
+          1,
+          0,
+          2
+        ],
+        [
+          28,
+          0,
+          6,
+          2,
+          0,
+          0,
+          1,
+          11,
+          1268,
+          5,
+          0,
+          2
+        ],
+        [
+          8,
+          0,
+          0,
+          38,
+          5,
+          3,
+          20,
+          0,
+          2,
+          1091,
+          0,
+          0
+        ],
+        [
+          25,
+          0,
+          35,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          819,
+          0
+        ],
+        [
+          7,
+          0,
+          0,
+          0,
+          0,
+          0,
+          11,
+          3,
+          15,
+          0,
+          0,
+          719
+        ]
+      ]
+    },
+    "data_source": "ud_english_ewt"
   }
 }

@@ -1,5 +1,11 @@
+import csv
 import logging
 import random
+import uuid
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+from matplotlib.container import BarContainer
 from functools import lru_cache
 from pathlib import Path
 
@@ -32,6 +38,21 @@ def set_seed(seed: int = 42, deterministic: bool = True) -> None:
     if deterministic:
         torch.backends.cudnn.deterministic = True
         torch.backends.cudnn.benchmark = False
+
+
+def make_run_uuid() -> str:
+    return f"run_{uuid.uuid4().hex[:8]}"
+
+
+def append_csv_row(csv_path: str | Path, row: dict) -> None:
+    dest = resolve_path(csv_path)
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    write_header = not dest.exists()
+    with dest.open("a", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=list(row.keys()))
+        if write_header:
+            writer.writeheader()
+        writer.writerow(row)
 
 
 def setup_logger(name: str, log_dir: str | Path, filename: str) -> logging.Logger:
@@ -144,3 +165,56 @@ def inflect_english(lemma: str, upos: str, feature: str) -> str:
     if feature == "SUPER":
         return f"most {low}"
     return low
+
+
+def export_eda_png(df, x_col: str, y_col: str, title: str, fig_dir: str | Path = "figures") -> Path:
+    out_dir = resolve_path(fig_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    dest = out_dir / "eda_top_tags.png"
+    sns.set_theme(style="whitegrid")
+    fig, ax = plt.subplots(figsize=(10, 5), dpi=300)
+    sns.barplot(data=df, x=x_col, y=y_col, hue=x_col, palette="viridis", legend=False, ax=ax)
+    ax.set_title(title, fontsize=13, fontweight="bold")
+    ax.tick_params(axis="x", rotation=35)
+    for container in ax.containers:
+        if isinstance(container, BarContainer):
+         ax.bar_label(container, fmt="%.3f", fontsize=9, padding=2)
+    fig.tight_layout()
+    fig.savefig(dest)
+    plt.close(fig)
+    return dest
+
+
+def export_epochs_png(df, title: str, fig_dir: str | Path = "figures") -> Path:
+    out_dir = resolve_path(fig_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    dest = out_dir / "bilstm_epoch_curves.png"
+    sns.set_theme(style="whitegrid")
+    fig, ax = plt.subplots(figsize=(10, 5), dpi=300)
+    sns.lineplot(data=df, x="epoch", y="val_accuracy", hue="run_name", style="run_uuid", marker="o", ax=ax)
+    ax.set_title(title, fontsize=13, fontweight="bold")
+    ax.set_xlabel("Epoch")
+    ax.set_ylabel("Validation Accuracy")
+    fig.tight_layout()
+    fig.savefig(dest)
+    plt.close(fig)
+    return dest
+
+
+def export_comparison_png(comp_df, title: str, fig_dir: str | Path = "figures") -> Path:
+    out_dir = resolve_path(fig_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    dest = out_dir / "model_comparison.png"
+    sns.set_theme(style="whitegrid")
+    melted = comp_df.melt(id_vars="Model", value_vars=["Test Accuracy", "Macro F1"], var_name="Metric", value_name="Score")
+    fig, ax = plt.subplots(figsize=(8, 5), dpi=300)
+    sns.barplot(data=melted, x="Model", y="Score", hue="Metric", palette="Set2", ax=ax)
+    ax.set_title(title, fontsize=13, fontweight="bold")
+    ax.set_ylim(0, 1.08)
+    for container in ax.containers:
+        if isinstance(container, BarContainer):
+            ax.bar_label(container, fmt="%.3f", fontsize=9, padding=2)
+    fig.tight_layout()
+    fig.savefig(dest)
+    plt.close(fig)
+    return dest

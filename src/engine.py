@@ -203,15 +203,27 @@ class DynamicTranslator:
     def available_languages(self) -> list[str]:
         return ["english"] + sorted(self.profiles.keys())
 
-    def translate(self, text: str, source_lang: str, target_lang: str, tagger_fn) -> str:
-        src, tgt = source_lang.strip().lower(), target_lang.strip().lower()
+    def translate(self, text: str, src_lang: str, tgt_lang: str, tagger_fn) -> str:
+        src = src_lang.strip().lower()
+        tgt = tgt_lang.strip().lower()
         if src == tgt:
             return text
+        if src != "english" and tgt != "english":
+            english_bridge = self._con_to_eng(text, src)
+            return self._eng_to_con(english_bridge, tgt, tagger_fn)
         if src == "english":
             return self._eng_to_con(text, tgt, tagger_fn)
-        if tgt == "english":
-            return self._con_to_eng(text, src)
-        return self._eng_to_con(self._con_to_eng(text, src), tgt, tagger_fn)
+        return self._con_to_eng(text, src)
+
+    # def translate(self, text: str, source_lang: str, target_lang: str, tagger_fn) -> str:
+    #     src, tgt = source_lang.strip().lower(), target_lang.strip().lower()
+    #     if src == tgt:
+    #         return text
+    #     if src == "english":
+    #         return self._eng_to_con(text, tgt, tagger_fn)
+    #     if tgt == "english":
+    #         return self._con_to_eng(text, src)
+    #     return self._eng_to_con(self._con_to_eng(text, src), tgt, tagger_fn)
 
     def _eng_to_con(self, text: str, target: str, tagger_fn) -> str:
         if target not in self.profiles:

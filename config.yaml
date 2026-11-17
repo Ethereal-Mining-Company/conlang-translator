@@ -1,6 +1,7 @@
 runtime:
   random_seed: 42
   deterministic: true
+  cv_folds: 1
   confusion_matrix_top_k: 12
   metrics_file: "model_metrics.json"
 
@@ -12,6 +13,8 @@ paths:
   artifacts_prod: "artifacts/production"
   figures: "figures"
   logs: "logs"
+  runs_csv: "logs/experiment_runs.csv"
+  epochs_csv: "logs/epoch_history.csv"
 
 dataset:
   urls:
@@ -22,7 +25,13 @@ dataset:
 translator:
   default_source: "english"
   default_target: "aelorian"
-  active_model: "bilstm_crf"
+  active_model: "random_forest"
+
+features:
+  prefix_lengths: [1, 2, 3, 4]
+  suffix_lengths: [1, 2, 3, 4]
+  context_window: 2
+  include_orthography: true
 
 models:
   random_forest:
@@ -32,14 +41,18 @@ models:
     log_file: "rf_training.log"
     runs:
       - name: "RF_Baseline"
-        n_estimators: 50
-        max_depth: 20
+        n_estimators: 100
+        max_depth: 30
+        max_features: "sqrt"
       - name: "RF_Tuned"
-        n_estimators: 150
-        max_depth: 40
-      - name: "RF_Deep"
-        n_estimators: 200
+        n_estimators: 250
         max_depth: null
+        max_features: "sqrt"
+        class_weight: "balanced_subsample"
+      - name: "RF_DenseSplit"
+        n_estimators: 300
+        max_depth: null
+        max_features: 0.03
 
   bilstm_crf:
     enabled: true
@@ -48,15 +61,61 @@ models:
     log_file: "bilstm_training.log"
     batch_size: 32
     eval_batch_size: 64
-    dropout: 0.3
+    dropout: 0.35
     runs:
-      - name: "BiLSTM_Baseline"
-        emb_dim: 64
-        hidden_dim: 128
-        epochs: 3
-        lr: 0.003
-      - name: "BiLSTM_Tuned"
+      - name: "BiLSTM_WordOnly"
         emb_dim: 128
         hidden_dim: 256
-        epochs: 6
+        char_dim: 0
+        epochs: 5
         lr: 0.003
+      - name: "BiLSTM_MultiCharCNN"
+        emb_dim: 200
+        hidden_dim: 384
+        char_dim: 48
+        epochs: 10
+        lr: 0.0025
+  
+  hist_gbdt:
+    enabled: true
+    display_name: "HistGradientBoosting"
+    artifact_name: "hgb_tagger.joblib"
+    log_file: "hgb_training.log"
+    runs:
+      - name: "HGB_Baseline"
+        top_k_features: 600
+        max_iter: 100
+        learning_rate: 0.1
+        max_leaf_nodes: 31
+      - name: "HGB_Tuned"
+        top_k_features: 1000
+        max_iter: 200
+        learning_rate: 0.08
+        max_leaf_nodes: 63
+      - name: "HGB_Hashed2048"
+        n_hash_features: 2048
+        max_iter: 200
+        learning_rate: 0.08
+        max_leaf_nodes: 63
+      - name: "HGB_MaxSafe4096"
+        n_hash_features: 4096
+        max_iter: 300
+        learning_rate: 0.07
+        max_leaf_nodes: 63
+
+  mlp_tagger:
+    enabled: true
+    display_name: "MLP Neural Net"
+    artifact_name: "mlp_tagger.joblib"
+    log_file: "mlp_training.log"
+    runs:
+      - name: "MLP_Compact"
+        hidden_layer_sizes: [128]
+        alpha: 0.0005
+        max_iter: 12
+        learning_rate_init: 0.002
+      - name: "MLP_Tuned"
+        hidden_layer_sizes: [256, 128]
+        alpha: 0.0001
+        max_iter: 15
+        learning_rate_init: 0.0015
