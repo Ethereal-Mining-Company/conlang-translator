@@ -17,4 +17,18 @@ singular_triggers:
   - "everyone"
   - "someone"
   - "nobody"
+
+invariant_verbs:
+  - cast
+  - hit
+  - cut
+  - set
+  - hurt
+  - shut
+  - split
+  - thrust
+  - burst
+  - cost
+  - put
+  - spread
   

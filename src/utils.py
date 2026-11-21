@@ -114,12 +114,12 @@ def lemmatize_token(word: str, upos: str) -> str:
         return table[upos][low]
     if len(low) <= 3:
         return low
-    if upos == "NOUN":
-        if low.endswith("ies") and len(low) > 4:
+    if upos == "NOUN" and len(low) > 3:
+        if low.endswith("ies"):
             return low[:-3] + "y"
-        if low.endswith(("ses", "xes", "zes", "ches", "shes")) and len(low) > 4:
+        if low.endswith(("ches", "shes", "xes", "zes", "sses")):
             return low[:-2]
-        if low.endswith("s") and not low.endswith("ss"):
+        if low.endswith("s") and not low.endswith(("ss", "us", "is")):
             return low[:-1]
     elif upos == "VERB":
         for sfx, min_len in (("ing", 5), ("ed", 4)):

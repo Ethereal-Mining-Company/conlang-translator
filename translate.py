@@ -36,7 +36,17 @@ def _print_diagnostics(text: str, cfg: dict, translator: DynamicTranslator, src:
 
 def _print_menu(model_name: str, src: str, tgt: str, diag_mode: bool) -> None:
     print(f"\n=== Conlang Translator | Model: {model_name} | {src.upper()} -> {tgt.upper()} | Diag: {'ON' if diag_mode else 'OFF'} ===")
-    print("Commands: /to <lang>, /from <lang>, /swap, /model <name>, /diag, /reload, /info, /menu, /help, /quit\n")
+    print("Commands: /to <lang>, /from <lang>, /swap, /model <name>, /diag, ,/trace /reload, /info, /menu, /help, /quit\n")
+
+
+def _print_trace(rows: list[dict], final_out: str, tgt_lang: str) -> None:
+    print(f"\n--- CONVEYOR BELT TRACE (-> {tgt_lang.upper()}) ---")
+    header = f"{'TOKEN':<16} {'ML TAG':<18} {'S0:GUARD':<9} {'S1:IDIOM':<9} {'S2:NAME':<10} {'S3:LEMMA':<14} {'S4:LEXICON':<12} {'S5:AFFIX':<12} {'OUTPUT'}"
+    print(header)
+    print("-" * len(header))
+    for r in rows:
+        print(f"{r['token']:<16} {r['tag']:<18} {r['s0']:<9} {r['s1']:<9} {r['s2']:<10} {r['s3']:<14} {r['s4']:<12} {r['s5']:<12} {r['output']}")
+    print(f"\n-> {final_out}\n")
 
 
 def main() -> None:
@@ -47,14 +57,16 @@ def main() -> None:
     active_key = cfg["translator"]["active_model"]
     tagger, model_name = get_tagger(cfg, active_key)
     diag_mode = False
+    trace_mode = False
 
     _print_menu(model_name, src, tgt, diag_mode)
     while True:
-        mode_tag = " [DIAG]" if diag_mode else ""
+        mode_tag = f"{' [DIAG]' if diag_mode else ''}{' [TRACE]' if trace_mode else ''}"
         try:
             raw = input(f"[{src.upper()} -> {tgt.upper()}]{mode_tag} > ").strip()
         except (EOFError, KeyboardInterrupt):
             break
+
         if not raw:
             continue
         if raw.startswith("/"):
@@ -67,6 +79,9 @@ def main() -> None:
             elif cmd == "/diag":
                 diag_mode = not diag_mode
                 print(f"Diagnostics Mode: {'ON' if diag_mode else 'OFF'}")
+            elif cmd == "/trace":
+                trace_mode = not trace_mode
+                print(f"Trace Mode: {'ON' if trace_mode else 'OFF'}")
             elif cmd == "/swap":
                 src, tgt = tgt, src
             elif cmd == "/to" and arg in translator.available_languages():
@@ -87,7 +102,17 @@ def main() -> None:
 
         if diag_mode:
             _print_diagnostics(raw, cfg, translator, src, tgt)
-        else:
+
+        if trace_mode:
+            bridge = translator._con_to_eng(raw, src) if src != "english" else raw
+            if tgt == "english":
+                print(f"-> {bridge}\n")
+            else:
+                res = translator._eng_to_con(bridge, tgt, tagger, return_trace=True)
+                if isinstance(res, tuple):
+                    rows, final_out = res
+                    _print_trace(rows, final_out, tgt)
+        elif not diag_mode:
             print(f"-> {translator.translate(raw, src, tgt, tagger)}\n")
 
 

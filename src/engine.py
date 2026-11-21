@@ -210,69 +210,121 @@ class DynamicTranslator:
             return text
         if src != "english" and tgt != "english":
             english_bridge = self._con_to_eng(text, src)
-            return self._eng_to_con(english_bridge, tgt, tagger_fn)
+            return str(self._eng_to_con(english_bridge, tgt, tagger_fn))
         if src == "english":
-            return self._eng_to_con(text, tgt, tagger_fn)
+            return str(self._eng_to_con(text, tgt, tagger_fn))
         return self._con_to_eng(text, src)
 
-    # def translate(self, text: str, source_lang: str, target_lang: str, tagger_fn) -> str:
-    #     src, tgt = source_lang.strip().lower(), target_lang.strip().lower()
-    #     if src == tgt:
-    #         return text
-    #     if src == "english":
-    #         return self._eng_to_con(text, tgt, tagger_fn)
-    #     if tgt == "english":
-    #         return self._con_to_eng(text, src)
-    #     return self._eng_to_con(self._con_to_eng(text, src), tgt, tagger_fn)
-
-    def _eng_to_con(self, text: str, target: str, tagger_fn) -> str:
+    def _eng_to_con(self, text: str, target: str, tagger_fn, return_trace: bool = False):
         if target not in self.profiles:
             raise ValueError(f"Unknown language: {target}")
         prof = self.profiles[target]
         tagged = tagger_fn(self._norm_eng(text))
+        if not tagged:
+            return ([], "") if return_trace else ""
+
+        rules = getattr(self, "english_rules", getattr(self, "rules", {}))
+        inv_verbs = {w.lower() for w in rules.get("invariant_verbs", ["cast", "hit", "cut", "set", "hurt"])}
+        guarded = set()
+        for idx in range(1, len(tagged) - 1):
+            if (
+                tagged[idx]["word"].lower() in inv_verbs
+                and tagged[idx]["upos"] == "NOUN"
+                and tagged[idx - 1]["upos"] in {"NOUN", "PROPN", "PRON"}
+                and tagged[idx + 1]["upos"] in {"DET", "ADJ", "NOUN", "PROPN", "PRON"}
+            ):
+                tagged[idx].update({"upos": "VERB", "morph": "Tense=Past", "label": "VERB|Tense=Past"})
+                guarded.add(idx)
+
+        orig_tagged = [dict(t) for t in tagged]
         if not prof.adj_before_noun:
             tagged = self._swap_adj(tagged)
-        out, i, n = list(), 0, len(tagged)
-        while i < n:
-            matched = False
-            for span in (4, 3, 2):
-                if i + span <= n:
-                    chunk = " ".join(t["word"].lower() for t in tagged[i : i + span])
-                    if chunk in prof.eng_phrases:
-                        w = prof.eng_phrases[chunk]
-                        out.append(self._match_case(tagged[i]["word"], w))
-                        i += span
-                        matched = True
-                        break
-            if matched:
-                continue
-            tok = tagged[i]
-            raw, upos, morph = tok["word"], tok["upos"], tok.get("morph", "")
-            lemma = tok.get("lemma") or lemmatize_token(raw, upos)
-            if upos == "PUNCT":
-                if out:
-                    out[-1] += raw
+
+        lemmas_table = yaml.safe_load(resolve_path("data/lemmas.yaml").read_text(encoding="utf-8")) if return_trace else {}
+        proper_nouns = getattr(prof, "proper_nouns", getattr(prof, "propn", {}))
+
+        def _process(stream: list[dict], record: bool) -> tuple[list[dict], list[str]]:
+            out, rows, i, n = [], [], 0, len(stream)
+            while i < n:
+                matched = False
+                for span in (4, 3, 2):
+                    if i + span <= n:
+                        chunk = " ".join(t["word"].lower() for t in stream[i : i + span])
+                        if chunk in prof.eng_phrases:
+                            w = self._match_case(stream[i]["word"], prof.eng_phrases[chunk])
+                            out.append(w)
+                            if record:
+                                rows.append({
+                                    "token": chunk, "tag": f"PHRASE({span}w)", "s0": "SKIP", "s1": "CAUGHT",
+                                    "s2": "SKIP", "s3": "SKIP", "s4": "SKIP", "s5": "SKIP", "output": w.lower(),
+                                })
+                            i += span
+                            matched = True
+                            break
+                if matched:
+                    continue
+
+                tok = stream[i]
+                raw, low, upos, morph, label = tok["word"], tok["word"].lower(), tok["upos"], tok.get("morph", ""), tok.get("label", tok["upos"])
+                if upos == "PUNCT":
+                    if out:
+                        out[-1] += raw
+                    else:
+                        out.append(raw)
+                    i += 1
+                    continue
+
+                lookup_pos = "DET" if (upos == "PRON" and "Poss=Yes" in morph) else upos
+                hit = prof.eng_to_con.get((low, lookup_pos)) or prof.eng_to_con.get((low, upos))
+                lemma = tok.get("lemma") or lemmatize_token(raw, upos)
+
+                if hit:
+                    root = hit
+                    w = self._inflect(hit, upos, morph, prof) if morph else hit
                 else:
-                    out.append(raw)
+                    root = (
+                        prof.eng_to_con.get((lemma.lower(), lookup_pos))
+                        or prof.eng_to_con.get((lemma.lower(), upos))
+                        or prof.eng_fallback.get(lemma.lower())
+                        or prof.eng_fallback.get(low)
+                        or raw
+                    )
+                    w = self._inflect(root, upos, morph, prof) if root != raw else raw
+
+                w_cased = self._match_case(raw, w)
+                out.append(w_cased)
+
+                if record:
+                    s0 = "FIXED" if i in guarded else "MISS"
+                    disp_out = w_cased if (raw in proper_nouns or upos == "PROPN") else w.lower()
+                    if raw in proper_nouns or upos == "PROPN":
+                        s2 = "LORE MAP" if (raw in proper_nouns or root != raw) else "OOV KEPT"
+                        rows.append({
+                            "token": raw, "tag": label, "s0": s0, "s1": "MISS",
+                            "s2": s2, "s3": "SKIP", "s4": "SKIP", "s5": "SKIP", "output": disp_out,
+                        })
+                    else:
+                        s3 = f"UD:{lemmas_table[upos][low]}" if low in lemmas_table.get(upos, {}) else (f"STRIP:{lemma}" if lemma != low else f"ROOT:{lemma}")
+                        s4 = f"'{root.lower()}'" if (root.lower() != lemma.lower() or low in {"a", "an"}) else "PASSTHRU"
+                        sfx = w.lower()[len(root.lower()):] if (len(w) > len(root) and w.lower().startswith(root.lower())) else ""
+                        s5 = "NONE"
+                        for fk, ak in [("Number=Plur", "PLUR"), ("Tense=Past", "PAST"), ("Tense=Fut", "FUT"), ("Degree=Cmp", "COMP"), ("Degree=Sup", "SUPER")]:
+                            if fk in morph:
+                                s5 = f"+{ak}(-{sfx})" if sfx else f"+{ak}"
+                                break
+                        rows.append({
+                            "token": raw, "tag": label, "s0": s0, "s1": "MISS",
+                            "s2": "MISS", "s3": s3, "s4": s4, "s5": s5, "output": disp_out,
+                        })
                 i += 1
-                continue
-            lookup_pos = "DET" if (upos == "PRON" and "Poss=Yes" in morph) else upos
-            hit = prof.eng_to_con.get((raw.lower(), lookup_pos)) or prof.eng_to_con.get((raw.lower(), upos))
-            if hit:
-                w = hit
-            else:
-                root = (
-                    prof.eng_to_con.get((lemma.lower(), lookup_pos))
-                    or prof.eng_to_con.get((lemma.lower(), upos))
-                    or prof.eng_fallback.get(lemma.lower())
-                    or prof.eng_fallback.get(raw.lower())
-                    or raw
-                )
-                w = self._inflect(root, upos, morph, prof) if root != raw else raw
-            w = self._match_case(raw, w)
-            out.append(w)
-            i += 1
-        return self._apply_sentence_case(self._clean_punctuation(" ".join(out)))
+            return rows, out
+
+        _, final_out = _process(tagged, record=False)
+        final_str = self._apply_sentence_case(self._clean_punctuation(" ".join(final_out)))
+        if return_trace:
+            trace_rows, _ = _process(orig_tagged, record=True)
+            return trace_rows, final_str
+        return final_str
 
     def _con_to_eng(self, text: str, source: str) -> str:
         if source not in self.profiles:

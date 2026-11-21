@@ -25,7 +25,7 @@ dataset:
 translator:
   default_source: "english"
   default_target: "aelorian"
-  active_model: "random_forest"
+  active_model: "bilstm_crf"
 
 features:
   prefix_lengths: [1, 2, 3, 4]

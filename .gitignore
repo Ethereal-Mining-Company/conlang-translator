@@ -229,3 +229,4 @@ artifacts/experiments
 Thumbs.db
 *.pt
 *.joblib
+scratch.py
